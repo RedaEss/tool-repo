@@ -1,0 +1,131 @@
+@font-face {
+  font-family: 'Edo';
+  src: url('../fonts/Edo-SZ.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --main-bg: #ffffff;
+  --text-primary: #333333;
+  --transition: 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Edo', monospace;
+  background: var(--main-bg);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-display {
+  flex: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.control-panel {
+  flex: 1;
+  display: flex;
+  background: var(--main-bg);
+}
+
+.control-item {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.control-text {
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--transition);
+  position: relative;
+}
+
+.control-text:hover {
+  color: #000000;
+}
+
+.control-text:hover::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+}
+
+.logo-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.logo {
+  max-width: 60px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.logo:hover {
+  transform: rotate(15deg) scale(1.1);
+}
+
+.site-title {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+}
+
+.main-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  transition: transform var(--transition);
+}
+
+/* Classe pour masquer les éléments sans affecter leur espace */
+.invisible {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+/* Media query pour mobile :
+   - Réduction de la taille de la police
+   - Agrandissement de l'image par zoom (scale 1.5)
+   - Pour l'image par défaut, centrage total
+   - Pour les images projets, zoom 1.5 avec décalage vers la gauche */
+@media (max-width: 768px) {
+  .control-text {
+    font-size: 1.2rem;
+  }
+  
+  /* Pour l'image par défaut */
+  .main-image.default-img {
+    transform: scale(1.5);
+    margin: 0 auto;
+  }
+  
+  /* Pour les images des projets */
+  .main-image.shift-left {
+    transform: scale(1.5) translateX(-10%);
+    margin: 0 auto;
+  }
+}
