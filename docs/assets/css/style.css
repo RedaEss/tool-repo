@@ -55,6 +55,7 @@ body {
   cursor: pointer;
   transition: color var(--transition);
   position: relative;
+  padding: 0 15px;
 }
 
 .control-text:hover {
@@ -76,22 +77,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
 }
 
 .logo {
   max-width: 60px;
-  transition: var(--transition);
   cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
 .logo:hover {
-  transform: rotate(15deg) scale(1.1);
-}
-
-.site-title {
-  font-size: 1.5rem;
-  letter-spacing: 2px;
+  opacity: 0.7;
 }
 
 .main-image {
@@ -101,31 +96,27 @@ body {
   transition: transform var(--transition);
 }
 
-/* Classe pour masquer les éléments sans affecter leur espace */
+.main-image.shift-left {
+  cursor: pointer;
+}
+
 .invisible {
   opacity: 0;
   transition: opacity 0.5s ease;
 }
 
-/* Media query pour mobile :
-   - Réduction de la taille de la police
-   - Agrandissement de l'image par zoom (scale 1.5)
-   - Pour l'image par défaut, centrage total
-   - Pour les images projets, zoom 1.5 avec décalage vers la gauche */
 @media (max-width: 768px) {
   .control-text {
     font-size: 1.2rem;
   }
   
-  /* Pour l'image par défaut */
   .main-image.default-img {
     transform: scale(1.5);
     margin: 0 auto;
   }
   
-  /* Pour les images des projets */
   .main-image.shift-left {
     transform: scale(1.5) translateX(-10%);
-    margin: 0 auto;
   }
 }
+
