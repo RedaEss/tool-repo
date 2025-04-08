@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Jeu Mémoire - tool.monde</title>
+   <link rel="stylesheet" href="assets/css/jeu.css">
+   <style>
+       @font-face {
+         font-family: 'Edo';
+         src: url('assets/fonts/Edo-SZ.ttf') format('truetype');
+       }
+   </style>
+</head>
+<body>
+    <div class="layout-container">
+        <div id="jeu-container">
+            <div class="grille"></div>
+        </div>
+        
+        <div class="separator"></div>
+        
+        <div class="info-panel">
+            <div class="species-display">
+                <div class="species-image-container">
+                    <p class="placeholder">🦁 Aucune espèce trouvée</p>
+                </div>
+                <div class="species-text-container">
+                    <p style="font-family: 'Edo'; margin-bottom: 15px; color: #317f34;">
+                        Trouvez les paires d’espèces en danger d’extinction pour débloquer notre email.
+                    </p>
+                    <ul style="font-family: 'Edo'; list-style: none; padding-left: 20px;">
+                        <li>🎯 Ici, votre attention sert à apprendre, pas à être vendue</li>
+                        <li>🌱 Plus vous traînez ici, moins vous scrollez ailleurs</li>
+                        <li>💪 Renforcez focus, mémoire et connaissances des espèces</li>
+                    </ul>
+                    <p style="font-family: 'Edo'; margin-top: 15px; color: #f6a508;">
+                        À vous de jouer !!
+                    </p>
+                </div>
+            </div>
+            <div class="button-container">
+                <button id="reset">Nouvelle partie</button>
+                <div class="home-button">
+                    <img src="images/logo-default.png" 
+                         alt="Retour à l'accueil" 
+                         class="home-logo"
+                         onclick="window.location.href='index.html'">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jeu.js"></script>
+</body>
+</html>

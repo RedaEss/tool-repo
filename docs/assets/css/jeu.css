@@ -1,0 +1,435 @@
+/* Reset et polices */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'Edo';
+    src: url('assets/fonts/Edo-SZ.ttf') format('truetype');
+}
+
+/* Structure principale */
+.layout-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    font-family: 'Edo', sans-serif;
+}
+
+#jeu-container {
+    width: 50vw;
+    height: 100vh;
+    background: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+}
+
+.separator {
+    width: 2px;
+    height: 100vh;
+    background: #ccc;
+}
+
+.info-panel {
+    width: 50vw;
+    height: 100vh;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Affichage des espèces */
+.species-display {
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+}
+
+.species-image-container {
+    flex: 1;
+    background: #f5f5f5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.species-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+
+.species-image-container p {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
+
+.species-text-container {
+    flex: 1;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+}
+
+.species-text-container h3 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.species-text-container p {
+    color: #34495e;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    margin-top: 8px;
+}
+
+.species-text-container a[style*="#a82e11"] {
+    display: inline-block;
+    margin: 8px 0;
+    transition: opacity 0.3s;
+}
+
+.species-text-container a[style*="#a82e11"]:hover {
+    opacity: 0.8;
+    text-decoration: underline !important;
+}
+
+/* Conteneur du bouton */
+.button-container {
+    height: 10%;
+    padding: 0 20px 20px;
+    display: flex;
+    align-items: flex-end;
+}
+
+/* Styles du jeu */
+.grille {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.ligne {
+    display: flex;
+    margin: -10px 0;
+}
+
+.ligne.offset {
+    margin-left: 83px;
+}
+
+.cell {
+    position: relative;
+    width: 80px;
+    height: 92px;
+    margin: 0 2px;
+}
+
+/* Styles pour les images */
+.symbole {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    z-index: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.hexagone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.3s, transform 0.2s;
+    z-index: 2;
+    background-color: #444;
+}
+
+.hexagone::after {
+    content: "?";
+    font-size: 1.5em;
+}
+
+.hexagone.disparu {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hexagone:hover {
+    transform: scale(1.05);
+}
+
+/* État révélé */
+.hexagone.disparu + .symbole {
+    opacity: 1;
+}
+
+/* Bouton Nouvelle partie */
+#reset {
+    padding: 12px 30px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Edo';
+    font-size: 1.1rem;
+    width: max-content;
+    transition: background 0.3s;
+}
+
+#reset:hover {
+    background: #555;
+}
+
+/* Animations de chargement */
+.loading-cell {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+.loading-hex {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+}
+
+/* Messages d'erreur */
+.error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.3rem;
+    text-align: center;
+    color: #c00;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    z-index: 10;
+}
+
+/* Modal de félicitations */
+.congrats-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    text-align: center;
+    z-index: 1001;
+    max-width: 350px;
+    width: 90%;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.congrats-modal h2 {
+    color: #317f34;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+}
+
+.congrats-modal p {
+    color: #34495e;
+    margin: 10px 0;
+    font-size: 1.1rem;
+}
+
+.mailto-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #317f34;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s;
+    border: 2px solid #317f34;
+}
+
+.mailto-link:hover {
+    background: white;
+    color: #317f34;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -55%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Version Mobile */
+@media (max-width: 768px) {
+    .layout-container {
+        flex-direction: column;
+    }
+
+    #jeu-container,
+    .info-panel {
+        width: 100vw;
+        height: auto;
+    }
+
+    #jeu-container {
+        height: 500vh;
+    }
+
+    .info-panel {
+        height: 45vh;
+    }
+
+    .species-display {
+        flex-direction: row;
+        height: 80%;
+    }
+
+    .species-text-container h3 {
+        font-size: 1.1rem;
+    }
+
+    .species-text-container a[style*="#a82e11"] {
+        font-size: 0.95rem;
+        margin: 6px 0;
+    }
+
+    .button-container {
+        height: 20%;
+        padding-bottom: 10px;
+    }
+
+    .grille {
+        transform: scale(0.85);
+        padding: 25px;
+    }
+
+    .ligne.offset {
+        margin-left: 78px;
+    }
+
+    .ligne {
+        margin: -8px 0;
+    }
+
+    .cell {
+        width: 75px;
+        height: 86px;
+    }
+
+    .symbole {
+        background-size: 70% 70%;
+    }
+
+    .congrats-modal {
+        padding: 20px;
+    }
+
+    .congrats-modal h2 {
+        font-size: 1.5rem;
+    }
+
+    .congrats-modal p {
+        font-size: 1rem;
+    }
+
+    .mailto-link {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+}
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    gap: 20px;
+}
+
+/* Style du logo de retour */
+.home-logo {
+    width: 60px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.home-logo:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .home-logo {
+        width: 40px;
+    }
+    
+    #reset {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
+}
