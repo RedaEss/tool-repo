@@ -57,59 +57,124 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchRandomSpecies() {
         let allSpecies = [];
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         
         for (const category of CATEGORIES) {
-            const params = new URLSearchParams({
-                action: "query",
-                list: "categorymembers",
-                cmtitle: category,
-                cmlimit: 500000,
-                format: "json",
-                origin: "*",
-                cb: CACHE_BUSTER
-            });
+            // Faire 3 passes avec des lettres aléatoires différentes
+            for (let pass = 0; pass < 3; pass++) {
+                const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+                const params = new URLSearchParams({
+                    action: "query",
+                    list: "categorymembers",
+                    cmtitle: category,
+                    cmlimit: 100,
+                    cmstartsortkeyprefix: randomLetter.toLowerCase(),
+                    format: "json",
+                    origin: "*",
+                    cb: CACHE_BUSTER
+                });
 
-            const response = await fetch(`${CORS_PROXY}${encodeURIComponent(WIKI_API + '?' + params)}`);
-            if (!response.ok) throw new Error('Erreur réseau');
-            
-            const data = await response.json();
-            const categorySpecies = data.query.categorymembers
-                .filter(m => m.ns === 0 && !m.title.includes('List of'))
-                .map(m => ({
-                    title: m.title,
-                    category: category.includes('critically') ? 'Critically Endangered' : 'Endangered'
-                }));
-            
-            allSpecies = [...allSpecies, ...categorySpecies];
+                try {
+                    const response = await fetch(`${CORS_PROXY}${encodeURIComponent(WIKI_API + '?' + params)}`);
+                    if (!response.ok) continue;
+                    
+                    const data = await response.json();
+                    if (!data?.query?.categorymembers) continue;
+                    
+                    const categorySpecies = data.query.categorymembers
+                        .filter(m => m.ns === 0 && !m.title.match(/^(List of|Category:|User:|File:)/i))
+                        .map(m => ({
+                            title: m.title,
+                            category: category.includes('critically') ? 'Critically Endangered' : 'Endangered',
+                            firstLetter: m.title.charAt(0).toUpperCase()
+                        }));
+                    
+                    allSpecies = [...allSpecies, ...categorySpecies];
+                } catch (error) {
+                    console.error(`Erreur sur ${category} (pass ${pass}):`, error);
+                }
+            }
         }
 
-        return allSpecies;
+        if (allSpecies.length === 0) {
+            throw new Error('Aucune espèce trouvée après plusieurs tentatives');
+        }
+
+        return shuffleArray(allSpecies);
     }
 
     async function prepareGameData(speciesList) {
         const validData = [];
         const shuffledSpecies = shuffleArray([...speciesList]);
+        const letterGroups = {};
 
-        for (const species of shuffledSpecies) {
-            if (validData.length >= PAIRS_NEEDED) break;
+        // Groupement par première lettre
+        shuffledSpecies.forEach(species => {
+            const letter = species.firstLetter;
+            if (!letterGroups[letter]) {
+                letterGroups[letter] = [];
+            }
+            letterGroups[letter].push(species);
+        });
 
-            try {
-                const {imageUrl, summary} = await fetchSpeciesData(species.title);
-                if (imageUrl && !validData.some(d => d.imageUrl === imageUrl)) {
-                    validData.push({
-                        imageUrl,
-                        summary,
-                        title: species.title,
-                        category: species.category
-                    });
-                    currentSpeciesData.set(imageUrl, {
-                        summary,
-                        title: species.title,
-                        category: species.category
-                    });
+        // Sélection équilibrée
+        const letters = Object.keys(letterGroups);
+        const targetPerLetter = Math.max(1, Math.floor(PAIRS_NEEDED / letters.length));
+
+        for (const letter of letters) {
+            const group = shuffleArray(letterGroups[letter]).slice(0, targetPerLetter);
+            
+            for (const species of group) {
+                if (validData.length >= PAIRS_NEEDED) break;
+                
+                try {
+                    const {imageUrl, summary} = await fetchSpeciesData(species.title);
+                    if (imageUrl && !validData.some(d => d.imageUrl === imageUrl)) {
+                        validData.push({
+                            imageUrl,
+                            summary,
+                            title: species.title,
+                            category: species.category
+                        });
+                        currentSpeciesData.set(imageUrl, {
+                            summary,
+                            title: species.title,
+                            category: species.category
+                        });
+                    }
+                } catch (e) {
+                    console.warn(`Erreur sur ${species.title}:`, e.message);
                 }
-            } catch (e) {
-                console.warn(`Erreur sur ${species.title}:`, e.message);
+            }
+        }
+
+        // Complément aléatoire si nécessaire
+        if (validData.length < PAIRS_NEEDED) {
+            const remaining = shuffleArray(
+                shuffledSpecies.filter(sp => !validData.some(v => v.title === sp.title))
+            );
+            
+            for (const species of remaining) {
+                if (validData.length >= PAIRS_NEEDED) break;
+                
+                try {
+                    const {imageUrl, summary} = await fetchSpeciesData(species.title);
+                    if (imageUrl && !validData.some(d => d.imageUrl === imageUrl)) {
+                        validData.push({
+                            imageUrl,
+                            summary,
+                            title: species.title,
+                            category: species.category
+                        });
+                        currentSpeciesData.set(imageUrl, {
+                            summary,
+                            title: species.title,
+                            category: species.category
+                        });
+                    }
+                } catch (e) {
+                    console.warn(`Erreur sur ${species.title}:`, e.message);
+                }
             }
         }
 
@@ -122,11 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
         }
-        return array;
+        return newArray;
     }
 
     async function fetchSpeciesData(title) {
