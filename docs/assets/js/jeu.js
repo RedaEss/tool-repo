@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 action: "query",
                 list: "categorymembers",
                 cmtitle: category,
-                cmlimit: 100,
+                cmlimit: 500000,
                 format: "json",
                 origin: "*",
                 cb: CACHE_BUSTER
@@ -230,10 +230,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <h2 style="font-family: 'Edo'; color: #317f34"> Bravo !</h2>
             <p style="font-family: 'Edo';">Tu as trouvé toutes les paires !</p>
             <p style="font-family: 'Edo';">Tu souhaites nous contacter ?</p>
-            <a href="mailto:contact@monsiteweb.org?subject=Bonjour" 
+            <a href="mailto:reda@tool-monde.info?subject=Bonjour" 
             class="mailto-link" 
-            style="font-family: 'Edo';">
-                Écris-nous à<br>contact@monsiteweb.org
+            style="font-family: 'Arial';">
+                Écris-nous à<br>reda@tool-monde.info
             </a>
         `;
         document.body.appendChild(modal);
