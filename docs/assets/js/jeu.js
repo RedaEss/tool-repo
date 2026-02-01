@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const INVALID_KEYWORDS = ['map', 'locator', 'symbol', 'distribution'];
     const PAIRS_NEEDED = 8;
-    const CORS_PROXY = " ";
+    const CORS_PROXY = "";
     const CACHE_BUSTER = Date.now();
 
     // Éléments DOM
