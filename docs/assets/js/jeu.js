@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const CORS_PROXY = "";
     const CACHE_BUSTER = Date.now();
 
+
     // Éléments DOM
     const grille = document.querySelector('.grille');
     const speciesImageContainer = document.querySelector('.species-image-container');
