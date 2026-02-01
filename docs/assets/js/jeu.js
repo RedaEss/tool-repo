@@ -6,9 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const INVALID_KEYWORDS = ['map', 'locator', 'symbol', 'distribution'];
     const PAIRS_NEEDED = 8;
-    const CORS_PROXY = "";
     const CACHE_BUSTER = Date.now();
-
 
     // Éléments DOM
     const grille = document.querySelector('.grille');
@@ -76,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 try {
-                    const response = await fetch(`${WIKI_API}?${params.toString()}`);
+                    const response = await fetch(`${WIKI_API}?${params}`);
                     if (!response.ok) continue;
                     
                     const data = await response.json();
@@ -201,33 +199,37 @@ document.addEventListener('DOMContentLoaded', () => {
             action: "query",
             titles: title,
             prop: "pageimages|extracts",
+            piprop: "thumbnail|original",
             pithumbsize: 400,
             exintro: true,
             explaintext: true,
             format: "json",
-            origin: "*",
-            cb: CACHE_BUSTER
+            origin: "*"
         });
-
-        const response = await fetch(`${WIKI_API}?${params.toString()}`);
+    
+        const response = await fetch(`${WIKI_API}?${params}`);
         if (!response.ok) throw new Error('Erreur API');
         
         const data = await response.json();
         const page = Object.values(data.query.pages)[0];
         
-        if (!page.thumbnail) throw new Error('Pas de miniature');
-        
-        const imageUrl = page.thumbnail.source;
+        const imageUrl =
+            page.thumbnail?.source ||
+            page.original?.source;
+    
+        if (!imageUrl) throw new Error('Pas d’image');
+    
         if (INVALID_KEYWORDS.some(kw => imageUrl.toLowerCase().includes(kw))) {
             throw new Error('Image non valide');
         }
-
+    
         return {
             imageUrl,
             summary: page.extract || "Description non disponible",
             title: page.title
         };
     }
+    
 
     function renderGrid(gameData) {
         if (gameData.length !== 16) {
