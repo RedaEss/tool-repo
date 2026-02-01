@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const INVALID_KEYWORDS = ['map', 'locator', 'symbol', 'distribution'];
     const PAIRS_NEEDED = 8;
-    const CORS_PROXY = "https://corsproxy.io/?";
+    const CORS_PROXY = "";
     const CACHE_BUSTER = Date.now();
 
     // Éléments DOM
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 try {
-                    const response = await fetch(`${CORS_PROXY}${encodeURIComponent(WIKI_API + '?' + params)}`);
+                    const response = await fetch(`${WIKI_API}?${params.toString()}`);
                     if (!response.ok) continue;
                     
                     const data = await response.json();
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cb: CACHE_BUSTER
         });
 
-        const response = await fetch(`${CORS_PROXY}${encodeURIComponent(WIKI_API + '?' + params)}`);
+        const response = await fetch(`${WIKI_API}?${params.toString()}`);
         if (!response.ok) throw new Error('Erreur API');
         
         const data = await response.json();
